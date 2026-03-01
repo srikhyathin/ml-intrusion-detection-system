@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+.layout {
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    background: #111827;
+    height: 100vh;
+    padding: 30px 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.nav-btn {
+    display: block;
+    background: #1f2937;
+    color: white;
+    text-decoration: none;
+    padding: 14px 16px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #2563eb;
+    transform: translateX(5px);
+}
+
+.nav-btn.active {
+    background: #2563eb;
+}
+
+/* MAIN AREA */
+.main {
+    flex: 1;
+    padding: 40px;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+/* STATS CARDS */
+.stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    flex: 1;
+    text-align: center;
+}
+
+/* CHART */
+.chart-container {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #334155;
+    text-align: center;
+}
+
+tr:hover {
+    background: #334155;
+}
+
+/* ACTION COLORS */
+.MONITOR { color: #22c55e; }
+.ALERT { color: #facc15; }
+.TEMP_BLOCK { color: #fb923c; }
+.PERMANENT_BLOCK { color: #ef4444; font-weight: bold; }

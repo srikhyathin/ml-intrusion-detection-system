@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ML IDS Security Platform</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta http-equiv="refresh" content="10">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">🔐 ML IDS</div>
+
+        <a href="/dashboard" class="nav-btn active">
+            📊 Dashboard
+        </a>
+
+        <a href="/docs" target="_blank" class="nav-btn">
+            📘 API Docs
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <h1>Security Monitoring Dashboard</h1>
+
+        <div class="stats">
+            <div class="card">
+                <h2>Total Events</h2>
+                <p>{{ total_events }}</p>
+            </div>
+
+            <div class="card">
+                <h2>Blocked IPs</h2>
+                <p>{{ blocked_count }}</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="actionChart"></canvas>
+        </div>
+
+        <h2>Recent Security Events</h2>
+
+        <table>
+            <tr>
+                <th>Source IP</th>
+                <th>Risk</th>
+                <th>Action</th>
+                <th>Timestamp</th>
+            </tr>
+            {% for event in events %}
+            <tr>
+                <td>{{ event[0] }}</td>
+                <td>{{ "%.4f"|format(event[1]) }}</td>
+                <td class="{{ event[2] }}">{{ event[2] }}</td>
+                <td>{{ event[3] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+const ctx = document.getElementById('actionChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ action_labels | safe }},
+        datasets: [{
+            label: 'Event Distribution',
+            data: {{ action_values | safe }},
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { labels: { color: "white" } }
+        },
+        scales: {
+            x: { ticks: { color: "white" } },
+            y: { ticks: { color: "white" } }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+joblib
+pandas
+scikit-learn
+numpy
+slowapi
+sqlalchemy
+jinja2
