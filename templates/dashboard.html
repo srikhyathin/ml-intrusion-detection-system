@@ -1,95 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ML IDS Security Platform</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <meta http-equiv="refresh" content="10">
-</head>
-<body>
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard(request: Request):
 
-<div class="layout">
+    cursor.execute("SELECT * FROM logs ORDER BY id DESC LIMIT 10")
+    logs = cursor.fetchall()
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">🔐 ML IDS</div>
+    cursor.execute("SELECT COUNT(*) FROM logs")
+    total = cursor.fetchone()[0]
 
-        <a href="/dashboard" class="nav-btn active">
-            📊 Dashboard
-        </a>
+    cursor.execute("SELECT COUNT(DISTINCT ip) FROM logs WHERE action='PERMANENT_BLOCK'")
+    blocked = cursor.fetchone()[0]
 
-        <a href="/docs" target="_blank" class="nav-btn">
-            📘 API Docs
-        </a>
-    </div>
+    cursor.execute("SELECT action, COUNT(*) FROM logs GROUP BY action")
+    stats = cursor.fetchall()
 
-    <!-- Main Content -->
-    <div class="main">
+    # ✅ FIX: Now logs is defined
+    latest_action = logs[0][3] if logs else "NONE"
 
-        <h1>Security Monitoring Dashboard</h1>
+    # ✅ Threat logic
+    if blocked > 2:
+        threat_level = "CRITICAL"
+    elif blocked > 0:
+        threat_level = "HIGH"
+    elif total > 5:
+        threat_level = "MEDIUM"
+    else:
+        threat_level = "LOW"
 
-        <div class="stats">
-            <div class="card">
-                <h2>Total Events</h2>
-                <p>{{ total_events }}</p>
-            </div>
-
-            <div class="card">
-                <h2>Blocked IPs</h2>
-                <p>{{ blocked_count }}</p>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <canvas id="actionChart"></canvas>
-        </div>
-
-        <h2>Recent Security Events</h2>
-
-        <table>
-            <tr>
-                <th>Source IP</th>
-                <th>Risk</th>
-                <th>Action</th>
-                <th>Timestamp</th>
-            </tr>
-            {% for event in events %}
-            <tr>
-                <td>{{ event[0] }}</td>
-                <td>{{ "%.4f"|format(event[1]) }}</td>
-                <td class="{{ event[2] }}">{{ event[2] }}</td>
-                <td>{{ event[3] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-
-    </div>
-
-</div>
-
-<script>
-const ctx = document.getElementById('actionChart').getContext('2d');
-
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: {{ action_labels | safe }},
-        datasets: [{
-            label: 'Event Distribution',
-            data: {{ action_values | safe }},
-        }]
-    },
-    options: {
-        plugins: {
-            legend: { labels: { color: "white" } }
-        },
-        scales: {
-            x: { ticks: { color: "white" } },
-            y: { ticks: { color: "white" } }
-        }
-    }
-});
-</script>
-
-</body>
-</html>
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "logs": logs,
+        "total": total,
+        "blocked": blocked,
+        "stats": stats,
+        "latest_action": latest_action,
+        "threat_level": threat_level
+    })
